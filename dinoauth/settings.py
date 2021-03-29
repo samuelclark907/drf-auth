@@ -12,6 +12,16 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+env = environ.Env(
+    DEBUG = (bool, False)
+)
+environ.Env.read_env()
+SECRET_KEY = env.str('SECRET_KEY')
+DEBUG = env.bool('DEBUG')
+ALLOWED_HOSTS = tuple(env.list('ALLOWED_HOSTS'))
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +31,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '9o57rwt016dtznna&4i_6hj9ask+hmc(-_0aw*gc3l3_cl_24q'
+# SECRET_KEY = '9o57rwt016dtznna&4i_6hj9ask+hmc(-_0aw*gc3l3_cl_24q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# DEBUG = False
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
+# ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1',]
 
 
 # Application definition
@@ -80,10 +90,10 @@ WSGI_APPLICATION = 'dinoauth.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'postgres',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_NAME'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
         'PORT': 5432,
     }
 }
@@ -135,5 +145,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES' : [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ]
 }
+
+
